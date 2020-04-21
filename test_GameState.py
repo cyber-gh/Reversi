@@ -9,13 +9,29 @@ class TestGameState(TestCase):
     def setUp(self) -> None:
         self.state = GameState()
 
-    @skip("Not implemented")
-    def test_is_final(self):
-        self.fail()
+    def test_board_is_full(self):
+        state = GameState(FINAL_CONFIG)
+        assert state.board_is_full() == True
 
-    @skip("Not implemented")
+    def test_is_final(self):
+        state = GameState(FINAL_CONFIG)
+        assert state.is_final() == True
+
     def test_winner(self):
-        self.fail()
+        state = GameState(FINAL_CONFIG)
+        assert state.winner() == JMAX
+
+    def test_score_jmax_won(self):
+        state = GameState(FINAL_CONFIG)
+        score = state.score()
+        correct_score = MAX_SCORE
+        return score == correct_score
+
+    def test_score_initial(self):
+        state = GameState()
+        score = state.score()
+        correct_score = 2
+        return score == correct_score
 
     def test_next_player(self):
         state = GameState(current_player=JMAX)
@@ -24,9 +40,7 @@ class TestGameState(TestCase):
         state = GameState(current_player=JMIN)
         assert state.next_player() == JMAX
 
-    @skip("Not implemented")
-    def test_score(self):
-        self.fail()
+
 
     def test_possible_moves_from(self):
         state = GameState()
@@ -67,7 +81,24 @@ class TestGameState(TestCase):
         move = state.possible_move_from_direction(4, 4, -1, 1)
         assert move is None
 
-    @skip("Not implemented")
+    def test_possible_moves_of_state(self):
+        state = GameState()
+        moves = list(state.possible_moves())
+        correct_moves = [(5, 3), (6, 4), (4, 6), (3, 5)]
+        assert set(moves) == set(correct_moves)
+
+    def test_next_state_by_moving_to(self):
+        state = GameState()
+        state = state.next_state_by_moving_to(6, 4)
+
+        correct_state = GameState()
+
+        correct_state.config[6][4] = correct_state.current_player
+        correct_state.config[5][4] = correct_state.current_player
+        correct_state.flip_player()
+
+        assert state == correct_state
+
     def test_next_after_initial_states(self):
         state = GameState()
         ans = state.next_states()
@@ -87,4 +118,4 @@ class TestGameState(TestCase):
         fourth.config[5][3] = JMAX
         fourth.config[5][4] = JMAX
 
-        assert ans == [first, second, third, fourth]
+        assert set(ans) == {first, second, third, fourth}

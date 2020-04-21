@@ -8,6 +8,9 @@ class GameState:
         return all(self.config[i] == other.config[i] for i in range(0, self.n)) \
                and self.current_player == other.current_player and self.n == other.n
 
+    def __hash__(self):
+        return hash(tuple(tuple(x) for x in self.config) + tuple(self.current_player))
+
     def __init__(self, config=INITIAL_CONFIG, current_player=JMAX):
         self.current_player = current_player
         self.config = dp(config)
@@ -45,19 +48,77 @@ class GameState:
                 yield move
 
     def possible_moves(self):
-        return []
+        pieces = self.get_all_pieces()
+        for x, y in pieces:
+            for move in self.possible_move_from(x, y):
+                yield move
+
+    def possible_moves_with_sources(self):
+        pieces = self.get_all_pieces()
+        for x, y in pieces:
+            for to_x, to_y in self.possible_move_from(x, y):
+                yield to_x, to_y, x, y
+
+    def next_state_by_moving_to(self, x, y):
+        nxt = dp(self)
+        if not (x, y) in self.possible_moves():
+            raise ValueError("Can't move here {}, {}".format(x, y))
+        for to_x, to_y, from_x, from_y in self.possible_moves_with_sources():
+            if (to_x, to_y) == (x, y):
+                dx = (to_x - from_x) // (abs(to_x - from_x) if abs(to_x - from_x) > 0 else 1)
+                dy = (to_y - from_y) // (abs(to_y - from_y) if abs(to_y - from_y) > 0 else 1)
+                curr_x, curr_y = from_x, from_y
+                while (curr_x, curr_y) != (to_x, to_y):
+                    nxt.config[curr_x][curr_y] = nxt.current_player
+                    curr_x += dx
+                    curr_y += dy
+        nxt.config[x][y] = nxt.current_player
+        nxt.flip_player()
+        return nxt
+
+    def board_is_full(self):
+        return sum(sum(1 if x == EMPTY else 0 for x in line) for line in self.config) == 0
+
+    def must_skip_turn(self):
+        if len(list(self.possible_moves())) == 0:
+            return True
+        return False
 
     def is_final(self):
-        return True
+        nxt = dp(self)
+        nxt.flip_player()
+        return self.board_is_full() or (self.must_skip_turn() and nxt.must_skip_turn())
+
+    def nr_pieces_of(self, player):
+        return sum(sum(1 if x == player else 0 for x in line) for line in self.config)
 
     def winner(self):
-        return None
+        if not self.is_final():
+            return None
+        jmax = self.nr_pieces_of(JMAX)
+        jmin = self.nr_pieces_of(JMIN)
+        if jmax == jmin:
+            return "TIE"
+        return JMAX if jmax > jmin else JMIN
 
     def next_player(self):
         return JMAX if self.current_player == JMIN else JMIN
 
+    def flip_player(self):
+        self.current_player = self.next_player()
+
     def score(self):
-        return 0
+        winner = self.winner()
+        if winner == JMAX:
+            return MAX_SCORE
+        elif winner == JMIN:
+            return -MAX_SCORE
+        elif winner == "TIE":
+            return 0
+        return self.nr_pieces_of(JMAX)
 
     def next_states(self):
-        return []
+        states = []
+        for x, y in self.possible_moves():
+            states.append(self.next_state_by_moving_to(x, y))
+        return states
