@@ -11,6 +11,8 @@ DARK_GREEN = (3, 44, 10)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
+BLUE = (44, 44, 255)
+
 pygame.init()
 
 
@@ -60,6 +62,17 @@ class DrawingEngine:
                         self.game_engine.player_move_to_pos(x, y)
                     except Exception as e:
                         print("Unable to move ", e)
+
+            self.game_engine.check_not_stuck()
+
+            if self.game_engine.state.is_final():
+                print("Reached game over")
+                font = pygame.font.Font('freesansbold.ttf', 50)
+                text = font.render("Game over: Winner is {}".format(self.game_engine.state.winner()), True, GREEN, BLUE)
+                X, Y = SCREEN_SIZE
+                self.screen.blit(text, (SQUARE_SIZE // 2, Y // 2))
+                pygame.display.update()
+                continue
 
             if counter % 60 == 0 and self.game_engine.state.current_player == JMAX:
                 self.game_engine.ai_move()

@@ -28,7 +28,13 @@ class GameEngine:
     def ai_move(self):
         print("AI turn")
         print(self.state)
-        self.state = self.state.random_move()
+        move = self.state.random_move()
+        if move is not None:
+            self.state = move
+
+    def check_not_stuck(self):
+        if self.state.must_skip_turn():
+            self.state.flip_player()
 
     def start(self):
         print("Game started")
