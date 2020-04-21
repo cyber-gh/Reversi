@@ -37,3 +37,8 @@ FINAL_CONFIG = [
     ["0", "w", "b", "b", "w", "b", "w", "b", "b"],  # 1
 
 ]
+
+NR_ROWS = 8
+NR_COLUMNS = NR_ROWS
+SQUARE_SIZE = 100
+SCREEN_SIZE = (NR_ROWS * SQUARE_SIZE, NR_COLUMNS * SQUARE_SIZE)

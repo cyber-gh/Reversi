@@ -16,11 +16,14 @@ class GameEngine:
                 inp = input("Your move: ").split(" ")
                 x = int(inp[0])
                 y = int(inp[1])
-                nxt = self.state.next_state_by_moving_to(x, y)
-                self.state = nxt
+                self.player_move_to_pos(x, y)
                 break
             except Exception as e:
                 print("Error, try again", e)
+
+    def player_move_to_pos(self, x, y):
+        nxt = self.state.next_state_by_moving_to(x, y)
+        self.state = nxt
 
     def ai_move(self):
         print("AI turn")

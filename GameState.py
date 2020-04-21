@@ -37,7 +37,7 @@ class GameState:
         return 1 <= x <= self.n and 1 <= y <= self.n
 
     def possible_move_from_direction(self, curr_x, curr_y, dx, dy):
-        if self.config[curr_x + dx][curr_y + dy] == self.next_player():
+        if self.in_range(curr_x + dx, curr_y + dy) and self.config[curr_x + dx][curr_y + dy] == self.next_player():
             curr_x += dx
             curr_y += dy
             while self.in_range(curr_x, curr_y) and self.config[curr_x][curr_y] == self.next_player():
