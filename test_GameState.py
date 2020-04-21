@@ -9,6 +9,13 @@ class TestGameState(TestCase):
     def setUp(self) -> None:
         self.state = GameState()
 
+    def test_invalid_move(self):
+        try:
+            state = GameState().next_state_by_moving_to(1, 1)
+            assert False
+        except ValueError as e:
+            assert True
+
     def test_board_is_full(self):
         state = GameState(FINAL_CONFIG)
         assert state.board_is_full() == True

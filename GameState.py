@@ -4,6 +4,16 @@ from copy import deepcopy as dp
 
 class GameState:
 
+    def __str__(self):
+        tmp = ""
+        if self.is_final():
+            tmp += "Game over\n Winner is " + self.winner() + "\n"
+        else:
+            tmp += "{} turn's\n".format(self.current_player)
+        for line in self.config[1:]:
+            tmp += " ".join(line[1:]) + "\n"
+        return tmp
+
     def __eq__(self, other):
         return all(self.config[i] == other.config[i] for i in range(0, self.n)) \
                and self.current_player == other.current_player and self.n == other.n
@@ -122,3 +132,7 @@ class GameState:
         for x, y in self.possible_moves():
             states.append(self.next_state_by_moving_to(x, y))
         return states
+
+
+if __name__ == '__main__':
+    print(GameState())
