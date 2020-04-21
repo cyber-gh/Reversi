@@ -1,5 +1,6 @@
 from helper import *
 from copy import deepcopy as dp
+from random import choice
 
 
 class GameState:
@@ -71,7 +72,7 @@ class GameState:
 
     def next_state_by_moving_to(self, x, y):
         nxt = dp(self)
-        if not (x, y) in self.possible_moves():
+        if not (x, y) in self.possible_moves() or not self.in_range(x, y):
             raise ValueError("Can't move here {}, {}".format(x, y))
         for to_x, to_y, from_x, from_y in self.possible_moves_with_sources():
             if (to_x, to_y) == (x, y):
@@ -85,6 +86,11 @@ class GameState:
         nxt.config[x][y] = nxt.current_player
         nxt.flip_player()
         return nxt
+
+    def random_move(self):
+        if self.must_skip_turn():
+            return None
+        return choice(self.next_states())
 
     def board_is_full(self):
         return sum(sum(1 if x == EMPTY else 0 for x in line) for line in self.config) == 0
