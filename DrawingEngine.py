@@ -90,5 +90,5 @@ class DrawingEngine:
 
 
 if __name__ == '__main__':
-    drawing_engine = DrawingEngine(GameEngine(GameState()))
+    drawing_engine = DrawingEngine(GameEngine(GameState(), algorithm=2))
     drawing_engine.run()
