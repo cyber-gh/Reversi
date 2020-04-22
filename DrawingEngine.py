@@ -24,17 +24,25 @@ class DrawingEngine:
 
     def draw_board(self):
         config = self.game_engine.state.config
+        moves = []
+        if self.game_engine.state.current_player == JMIN:
+            moves = list(self.game_engine.state.possible_moves())
         for i in range(1, len(config)):
             for j in range(1, len(config)):
                 pygame.draw.rect(self.screen, GREEN, ((i - 1) * SQUARE_SIZE, (j - 1) * SQUARE_SIZE, 100, 100))
                 pygame.draw.rect(self.screen, DARK_GREEN, ((i - 1) * SQUARE_SIZE, (j - 1) * SQUARE_SIZE, 100, 100),
                                  width=2)
+                if (i, j) in moves:
+                    pygame.draw.circle(self.screen, WHITE,((i - 1) * SQUARE_SIZE + SQUARE_SIZE / 2, (j - 1) * SQUARE_SIZE + SQUARE_SIZE / 2),
+                                   SQUARE_SIZE / 2 - 10, width=2)
                 if config[i][j] == EMPTY:
                     continue
                 color = BLACK if config[i][j] == JMAX else WHITE
                 pygame.draw.circle(self.screen, color,
                                    ((i - 1) * SQUARE_SIZE + SQUARE_SIZE / 2, (j - 1) * SQUARE_SIZE + SQUARE_SIZE / 2),
                                    SQUARE_SIZE / 2 - 10)
+
+
 
     def run(self):
         running = True
