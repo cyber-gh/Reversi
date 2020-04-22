@@ -2,7 +2,8 @@ JMAX = "b"
 JMIN = "w"
 EMPTY = "#"
 
-MAX_SCORE = 8 * 8
+MAX_SCORE = 100
+MIN_SCORE = -MAX_SCORE
 
 INITIAL_CONFIG = [
     # 0    #1   #2   #3   #4   #5   #6   #7   #8

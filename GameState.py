@@ -27,10 +27,12 @@ class GameState:
         self.config = dp(config)
         self.n = len(self.config) - 1
 
-    def get_all_pieces(self):
+    def get_all_pieces(self, player=None):
+        if player is None:
+            player = self.current_player
         for i in range(1, self.n + 1):
             for j in range(1, self.n + 1):
-                if self.config[i][j] == self.current_player:
+                if self.config[i][j] == player:
                     yield i, j
 
     def in_range(self, x, y):
@@ -58,8 +60,10 @@ class GameState:
             if move is not None:
                 yield move
 
-    def possible_moves(self):
-        pieces = self.get_all_pieces()
+    def possible_moves(self, player=None):
+        if player is None:
+            player = self.current_player
+        pieces = self.get_all_pieces(player)
         for x, y in pieces:
             for move in self.possible_move_from(x, y):
                 yield move
@@ -131,7 +135,38 @@ class GameState:
             return -MAX_SCORE
         elif winner == "TIE":
             return 0
-        return self.nr_pieces_of(JMAX) - self.nr_pieces_of(JMIN)
+        return self.combined_score()
+        # return self.nr_pieces_of(JMAX) - self.nr_pieces_of(JMIN)
+
+    def coin_difference_score(self):
+        mx = self.nr_pieces_of(JMAX)
+        mn = self.nr_pieces_of(JMIN)
+        return 100 * (mx - mn) / (mx + mn)
+
+    def possible_moves_score(self):
+        mx = len(list(self.possible_moves(JMAX)))
+        mn = len(list(self.possible_moves(JMIN)))
+
+        if mx + mn == 0:
+            return 0
+        return 100 * (mx - mn) / (mx + mn)
+
+    def captured_corners_score(self):
+        corners = list(self.get_corner_values())
+        mx = sum(1 if x == JMAX else 0 for x in corners)
+        mn = sum(1 if x == JMIN else 0 for x in corners)
+        if mx + mn == 0:
+            return 0
+        return 100 * (mx - mn) / (mx + mn)
+
+    def combined_score(self):
+        return 0.2 * self.coin_difference_score() + 0.4 * self.possible_moves_score() + 0.4 * self.captured_corners_score()
+
+    def get_corner_values(self):
+        for i in range(1, self.n + 1):
+            for j in range(1, self.n + 1):
+                if i == 1 or i == self.n or j == 1 or j == self.n:
+                    yield self.config[i][j]
 
     def next_states(self):
         states = []

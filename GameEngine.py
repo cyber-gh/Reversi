@@ -6,7 +6,7 @@ from func_timeout import func_timeout, FunctionTimedOut
 
 class GameEngine:
 
-    MAX_DEPTH = 7
+    MAX_DEPTH = 10
     TIMEOUT = 3
 
     def __init__(self, state, human=JMIN, algorithm=1):
@@ -24,11 +24,11 @@ class GameEngine:
             return state, state.score()
 
         if state.current_player == JMAX:
-            maxEval = -1e9
+            maxEval = MIN_SCORE
             picked_state = None
             for child in state.next_states():
                 move, score = GameEngine.alpha_beta(child, depth - 1, alpha, beta)
-                if score > maxEval:
+                if score >= maxEval:
                     maxEval = score
                     picked_state = child
 
@@ -37,11 +37,11 @@ class GameEngine:
                     break
             return picked_state, maxEval
         if state.current_player == JMIN:
-            minEval = 1e9
+            minEval = MAX_SCORE
             picked_state = None
             for child in state.next_states():
                 move, score = GameEngine.alpha_beta(child, depth - 1, alpha, beta)
-                if score < minEval:
+                if score <= minEval:
                     minEval = score
                     picked_state = child
                 beta = min(beta, score)
@@ -55,20 +55,20 @@ class GameEngine:
             return state, state.score()
 
         if state.current_player == JMAX:
-            maxEval = -1e9
+            maxEval = MIN_SCORE
             picked_state = None
             for child in list(state.next_states()):
                 nxt, score = GameEngine.mini_max(child, depth - 1)
-                if score > maxEval:
+                if score >= maxEval:
                     maxEval = score
                     picked_state = child
             return picked_state, maxEval
         if state.current_player == JMIN:
-            minEval = 1e9
+            minEval = MAX_SCORE
             picked_state = None
             for child in list(state.next_states()):
                 nxt, score = GameEngine.mini_max(child, depth - 1)
-                if score < minEval:
+                if score <= minEval:
                     minEval = score
                     picked_state = child
             return picked_state, minEval
@@ -104,15 +104,21 @@ class GameEngine:
         return move, score, d
 
     def incremental_alpha_beta(self):
-        move, score = GameEngine.alpha_beta(self.state, 1, -1e9, 1e9)
+        move, score = GameEngine.alpha_beta(self.state, 1, MIN_SCORE, MAX_SCORE)
         d = 1
         for depth in range(2, GameEngine.MAX_DEPTH  + 1):
             try:
                 d = depth
-                move, score = func_timeout(GameEngine.TIMEOUT, GameEngine.alpha_beta, args=(self.state, depth, -1e9, 1e9))
+                move, score = func_timeout(GameEngine.TIMEOUT, GameEngine.alpha_beta, args=(self.state, depth, MIN_SCORE, MAX_SCORE))
             except FunctionTimedOut:
                 break
         return move, score, d
+
+    def random_move(self):
+        if self.state.must_skip_turn():
+            self.state.flip_player()
+            return
+        self.state = choice(self.state.next_states())
 
     def ai_move(self):
         print("AI turn")
