@@ -46,7 +46,7 @@ class DrawingEngine:
     def run(self):
         running = True
         counter = 0
-        skip_frames = 30
+        skip_frames = 60
         while running:
             if counter > 100000:
                 counter = 0
@@ -80,10 +80,10 @@ class DrawingEngine:
                 pygame.display.update()
                 continue
 
-            if self.game_engine.state.current_player == self.game_engine.computer:
+            if counter % skip_frames == 0 and self.game_engine.state.current_player == self.game_engine.computer:
                 self.game_engine.ai_move()
-            if self.game_engine.state.current_player == self.game_engine.human:
-                self.game_engine.random_move()
+            # if self.game_engine.state.current_player == self.game_engine.human:
+            #     self.game_engine.random_move()
 
 
 
