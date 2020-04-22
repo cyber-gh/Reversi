@@ -80,7 +80,6 @@ class DrawingEngine:
             self.draw_board()
             pygame.display.update()
             counter += 1
-            print(counter)
 
 
 if __name__ == '__main__':
