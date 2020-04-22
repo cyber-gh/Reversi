@@ -4,8 +4,35 @@ from GameState import *
 
 class GameEngine:
 
+    MAX_DEPTH = 7
+
     def __init__(self, state):
         self.state = state
+
+    @staticmethod
+    def mini_max(state, depth):
+        if depth == 0 or state.is_final():
+            return state, state.scor()
+
+        if state.current_player == JMAX:
+            maxEval = -1e9
+            picked_state = None
+            for child in state.next_states():
+                nxt, score = GameEngine.mini_max(child, depth - 1)
+                if score > maxEval:
+                    maxEval = score
+                    picked_state = nxt
+            return picked_state, maxEval
+        if state.current_player == JMIN:
+            minEval = 1e9
+            picked_state = None
+            for child in state.next_states():
+                nxt, score = GameEngine.mini_max(child, depth - 1)
+                if score < minEval:
+                    minEval = score
+                    picked_state = nxt
+            return picked_state, minEval
+
 
     def player_move(self):
         print(self.state)

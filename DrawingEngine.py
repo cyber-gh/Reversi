@@ -21,8 +21,6 @@ class DrawingEngine:
     def __init__(self, game_engine):
         self.game_engine = game_engine
         self.screen = pygame.display.set_mode(SCREEN_SIZE)
-        self.screen.fill((255, 255, 255))
-        pygame.draw.rect(self.screen, GREEN, (200, 150, 100, 50))
 
     def draw_board(self):
         config = self.game_engine.state.config

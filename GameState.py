@@ -131,7 +131,7 @@ class GameState:
             return -MAX_SCORE
         elif winner == "TIE":
             return 0
-        return self.nr_pieces_of(JMAX)
+        return self.nr_pieces_of(JMAX) - self.nr_pieces_of(JMIN)
 
     def next_states(self):
         states = []
