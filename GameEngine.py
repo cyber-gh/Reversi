@@ -9,8 +9,12 @@ class GameEngine:
     MAX_DEPTH = 5
     TIMEOUT = 2
 
-    def __init__(self, state):
+    def __init__(self, state, human=JMIN):
+        self.human = human
+        assert human == JMIN or human == JMAX
+        self.computer = JMAX if human == JMIN else JMIN
         self.state = state
+
 
     @staticmethod
     def mini_max(state, depth):
@@ -20,7 +24,7 @@ class GameEngine:
         if state.current_player == JMAX:
             maxEval = -1e9
             picked_state = None
-            for child in state.next_states():
+            for child in list(state.next_states()):
                 nxt, score = GameEngine.mini_max(child, depth - 1)
                 if score > maxEval:
                     maxEval = score
@@ -29,7 +33,7 @@ class GameEngine:
         if state.current_player == JMIN:
             minEval = 1e9
             picked_state = None
-            for child in state.next_states():
+            for child in list(state.next_states()):
                 nxt, score = GameEngine.mini_max(child, depth - 1)
                 if score < minEval:
                     minEval = score
@@ -55,7 +59,7 @@ class GameEngine:
         nxt = self.state.next_state_by_moving_to(x, y)
         self.state = nxt
 
-    def get_ai_move_fast(self):
+    def incremental_mini_max(self):
         move, score = GameEngine.mini_max(self.state, 1)
         d = 1
         for depth in range(2, GameEngine.MAX_DEPTH  + 1):
@@ -74,7 +78,7 @@ class GameEngine:
             return
         st = time.time()
         # move, score = GameEngine.mini_max(self.state, GameEngine.MAX_DEPTH)
-        move, score, depth = self.get_ai_move_fast()
+        move, score, depth = self.incremental_mini_max()
         time_elapsed = time.time() - st
         print("Picked state with score {}\n Time elapsed: {}\n Reached depth: {}".format(score, time_elapsed, depth))
         self.state = move

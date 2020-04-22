@@ -24,16 +24,15 @@ class DrawingEngine:
 
     def draw_board(self):
         config = self.game_engine.state.config
-        moves = []
-        if self.game_engine.state.current_player == JMIN:
-            moves = list(self.game_engine.state.possible_moves())
+        moves = list(self.game_engine.state.possible_moves())
         for i in range(1, len(config)):
             for j in range(1, len(config)):
                 pygame.draw.rect(self.screen, GREEN, ((i - 1) * SQUARE_SIZE, (j - 1) * SQUARE_SIZE, 100, 100))
                 pygame.draw.rect(self.screen, DARK_GREEN, ((i - 1) * SQUARE_SIZE, (j - 1) * SQUARE_SIZE, 100, 100),
                                  width=2)
+                curr_color = BLACK if self.game_engine.state.current_player == JMAX else WHITE
                 if (i, j) in moves:
-                    pygame.draw.circle(self.screen, WHITE,((i - 1) * SQUARE_SIZE + SQUARE_SIZE / 2, (j - 1) * SQUARE_SIZE + SQUARE_SIZE / 2),
+                    pygame.draw.circle(self.screen, curr_color,((i - 1) * SQUARE_SIZE + SQUARE_SIZE / 2, (j - 1) * SQUARE_SIZE + SQUARE_SIZE / 2),
                                    SQUARE_SIZE / 2 - 10, width=2)
                 if config[i][j] == EMPTY:
                     continue
@@ -57,7 +56,7 @@ class DrawingEngine:
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.game_engine.state.current_player == JMAX:
+                    if self.game_engine.state.current_player != self.game_engine.human:
                         continue
                     x, y = pygame.mouse.get_pos()
                     x /= SQUARE_SIZE
@@ -80,7 +79,7 @@ class DrawingEngine:
                 pygame.display.update()
                 continue
 
-            if counter % 60 == 0 and self.game_engine.state.current_player == JMAX:
+            if counter % 60 == 0 and self.game_engine.state.current_player == self.game_engine.computer:
                 self.game_engine.ai_move()
 
 
