@@ -76,17 +76,22 @@ class GameEngine:
 
     def player_move(self):
         print(self.state)
+        if self.state.must_skip_turn():
+            print("You have nowhere to move, skipping your turn...")
+            self.state.flip_player()
+            return True
         while True:
             try:
-                if self.state.must_skip_turn():
-                    print("You have nowhere to move, skipping your turn...")
                 inp = input("Your move: ").split(" ")
+                if inp[0] == "exit":
+                    return False
                 x = int(inp[0])
                 y = int(inp[1])
                 self.player_move_to_pos(x, y)
                 break
             except Exception as e:
                 print("Error, try again", e)
+        return True
 
     def player_move_to_pos(self, x, y):
         nxt = self.state.next_state_by_moving_to(x, y)
@@ -141,7 +146,10 @@ class GameEngine:
         print("Game started")
         while not self.state.is_final():
             self.ai_move()
-            self.player_move()
+            did_move = self.player_move()
+            if not did_move:
+                print("user exited game")
+                break
         print(self.state)
 
 
