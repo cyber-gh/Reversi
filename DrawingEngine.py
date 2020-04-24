@@ -45,7 +45,7 @@ class DrawingEngine:
 
     def run(self):
         running = True
-        counter = 0
+        counter = 1
         skip_frames = 60
         while running:
             if counter > 100000:

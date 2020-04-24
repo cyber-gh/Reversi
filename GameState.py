@@ -163,6 +163,9 @@ class GameState:
         return 0.2 * self.coin_difference_score() + 0.4 * self.possible_moves_score() + 0.4 * self.captured_corners_score()
 
     def get_corner_values(self):
+        return [self.config[1][1], self.config[1][self.n], self.config[self.n][self.n], self.config[self.n][1]]
+
+    def get_border_values(self):
         for i in range(1, self.n + 1):
             for j in range(1, self.n + 1):
                 if i == 1 or i == self.n or j == 1 or j == self.n:
