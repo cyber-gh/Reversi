@@ -169,7 +169,7 @@ class GameState:
         return 100 * (mx - mn) / (mx + mn)
 
     def combined_score(self):
-        return 0.2 * self.coin_difference_score() + 0.4 * self.possible_moves_score() + 0.4 * self.captured_corners_score()
+        return 0.2 * self.better_coin_difference() + 0.4 * self.possible_moves_score() + 0.4 * self.captured_corners_score()
 
     def get_corner_values(self):
         return [self.config[1][1], self.config[1][self.n], self.config[self.n][self.n], self.config[self.n][1]]
