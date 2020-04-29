@@ -143,6 +143,15 @@ class GameState:
         mn = self.nr_pieces_of(JMIN)
         return 100 * (mx - mn) / (mx + mn)
 
+    '''Give +2 for side coins, +1 for normal'''
+    def better_coin_difference(self):
+        sides = list(self.get_border_values())
+        mx = self.nr_pieces_of(JMAX)
+        mn = self.nr_pieces_of(JMIN)
+        mx += sum(1 if x == JMAX else 0 for x in sides)
+        mn += sum(1 if x == JMIN else 0 for x in sides)
+        return 100 * (mx - mn) / (mx + mn)
+
     def possible_moves_score(self):
         mx = len(list(self.possible_moves(JMAX)))
         mn = len(list(self.possible_moves(JMIN)))

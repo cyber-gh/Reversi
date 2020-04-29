@@ -93,5 +93,21 @@ class DrawingEngine:
 
 
 if __name__ == '__main__':
-    drawing_engine = DrawingEngine(GameEngine(GameState(), algorithm=2))
+    while True:
+        try:
+            human = input("Alb sau negru (w/b)?")
+            assert human == JMIN or human == JMAX
+            break
+        except AssertionError as e:
+            print("Invalid choice, try again")
+
+    while True:
+        try:
+            algorithm = int(input("Minimax sau alpha-beta(1/2)?"))
+            assert algorithm == 1 or algorithm == 2
+            break
+        except AssertionError as e:
+            print("Invalid choice, try again")
+
+    drawing_engine = DrawingEngine(GameEngine(GameState(),human=human, algorithm=algorithm))
     drawing_engine.run()
