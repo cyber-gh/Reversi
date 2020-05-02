@@ -1,4 +1,4 @@
-# Reversi
+# Reversi (Othello)
 Reversi game done with Test Driven Development
 
 Minimax and alpha-beta pruning implemented.
